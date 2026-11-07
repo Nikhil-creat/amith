@@ -1,0 +1,1 @@
+self.addEventListener('install',e=>e.waitUntil(caches.open('a1').then(c=>c.addAll(['./']))));self.addEventListener('fetch',e=>{if(e.request.method==='GET'&&new URL(e.request.url).origin===location.origin)e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)))});

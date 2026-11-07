@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" class="js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AMITH — Autonomous Multimodal Intelligent Technology Hub</title>
+<link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@800;900&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#f3f6ff;--cy:#5ef3ff;--bz:#030409;--m:"Share Tech Mono",ui-monospace,monospace;--d:"Orbitron","Share Tech Mono",sans-serif;--u:min(100vw/2048,100vh/1150)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:#0b0f3a;color:var(--ink);font-family:var(--m);-webkit-font-smoothing:antialiased;padding:0}
+.layer{position:absolute;inset:0;overflow:hidden}
+canvas#sky,canvas#trail{position:absolute;inset:0;width:100%;height:100%}
+#trail{pointer-events:none}
+.hl{top:0}
+.track{position:absolute;left:0;top:calc(var(--u)*105);display:flex;white-space:nowrap;font:900 calc(var(--u)*230)/1 var(--d);letter-spacing:.02em;animation:drift 34s linear infinite;color:var(--ink);will-change:transform}
+.track span{padding-right:calc(var(--u)*120)}
+.track i{font:normal calc(var(--u)*24)/1 var(--m);vertical-align:top;margin-left:calc(var(--u)*-70);margin-right:calc(var(--u)*90);position:relative;top:calc(var(--u)*150)}
+@keyframes drift{to{transform:translateX(-50%)}}
+.paused .track,.paused .fig-in,.paused .planet{animation-play-state:paused}
+#fig{position:absolute;left:50%;bottom:calc(var(--h,1vh)*0 + 3vh);height:88vh;aspect-ratio:400/760;transform:translateX(-50%);perspective:900px;pointer-events:none}
+.fig-in{width:100%;height:100%;transform-style:preserve-3d;will-change:transform;animation:float 6s ease-in-out infinite}
+@keyframes float{50%{margin-top:-8px}}
+.side{position:absolute;top:calc(50% - var(--u)*101);font-size:calc(var(--u)*21.4);line-height:calc(var(--u)*30);text-transform:uppercase}
+.side b{font-weight:400;letter-spacing:.24em;display:block;position:relative;top:calc(var(--u)*-5)}
+.side p{margin:calc(var(--u)*21) 0 0}
+.l{left:calc(var(--u)*102)}.r{right:calc(var(--u)*95);text-align:right}
+.big{position:absolute;bottom:calc(var(--u)*120);font:900 calc(var(--u)*150)/1 var(--d);margin:0;letter-spacing:.02em}
+.bl{left:calc(var(--u)*60)}.br{right:calc(var(--u)*48)}
+#go{position:absolute;left:calc(50% - var(--u)*162);bottom:calc(var(--u)*131);width:calc(var(--u)*330);height:calc(var(--u)*102);border:0;background:none;padding:0;cursor:pointer;color:var(--ink);font:inherit}
+#go svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+#go .chip,#go .chev{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+#go:hover .chip{transform:translateX(-6px) scaleX(1.07);transform-origin:1180px 1175px}
+#go:hover .chev{transform:translateX(8px)}
+#go span{position:absolute;left:calc(var(--u)*62);top:50%;transform:translateY(-50%);font-size:calc(var(--u)*26.3);letter-spacing:.01em;transition:.5s}
+#go:hover span{text-shadow:0 0 calc(var(--u)*10) rgba(94,243,255,.6)}
+button:focus-visible{outline:2px solid var(--cy);outline-offset:4px}
+#hud{position:fixed;inset:0;z-index:10;pointer-events:none;--h:min(100vw/2048,100vh/1360)}
+#hud svg{position:absolute;inset:0;width:100%;height:100%}
+.ht{position:absolute;font-size:calc(var(--h)*23);line-height:1;white-space:pre;color:var(--ink)}
+button.ht{background:none;border:0;padding:0;font-family:var(--m);cursor:pointer;pointer-events:auto}
+button.ht:hover{color:var(--cy)}
+#brand{top:calc(var(--h)*14);left:50%;transform:translateX(calc(-50% - var(--h)*6))}
+#xy{bottom:calc(var(--h)*27);left:50%;transform:translateX(-50%);font-size:calc(var(--h)*21.3)}
+#menu{right:calc(var(--h)*41);top:calc(var(--h)*42)}
+#mot{left:calc(var(--h)*45);top:calc(var(--h)*40);display:flex;gap:calc(var(--h)*8);align-items:center}
+#mot svg{position:static;width:calc(var(--h)*68);height:calc(var(--h)*22)}
+.en{opacity:0;animation:up 1s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1}}
+.hide{position:absolute;left:-9999px}
+#panel{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;background:rgba(3,4,9,.72);backdrop-filter:blur(8px)}
+#panel.on{display:flex}
+.win{width:min(760px,92vw);max-height:84vh;background:rgba(6,9,22,.92);border:1px solid rgba(94,243,255,.5);clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px);padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 0 40px rgba(94,243,255,.15)}
+.win h2{margin:0;font:800 18px var(--d);letter-spacing:.12em;display:flex;justify-content:space-between}
+.win h2 button{background:none;border:0;color:var(--cy);font:inherit;cursor:pointer}
+.agents{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.ag{border:1px solid rgba(243,246,255,.2);padding:8px;font-size:13px;line-height:1.3;transition:.3s}
+.ag b{display:block;color:var(--cy);font-weight:400}
+.ag.act{border-color:var(--cy);background:rgba(94,243,255,.12);box-shadow:0 0 14px rgba(94,243,255,.3)}
+#log{flex:1;min-height:160px;overflow:auto;font-size:15px;line-height:1.5}
+#log p{margin:0 0 8px}#log .u{color:var(--cy)}
+form{display:flex;gap:8px}
+input{flex:1;background:#04060c;border:1px solid rgba(94,243,255,.45);color:var(--ink);font:16px var(--m);padding:10px;outline:0}
+input:focus{border-color:var(--cy)}
+form button{background:var(--cy);color:#04060c;border:0;font:16px var(--m);padding:0 16px;cursor:pointer}
+@media(max-width:820px){.side{display:none}.track{font-size:calc(100vw*.3)}#fig{height:68vh;bottom:12vh}.big{font-size:20vw;bottom:2vh}#go{left:calc(50% - 100px);width:200px;height:62px;bottom:calc(12vh - 80px);z-index:3}#go span{font-size:15px;left:38px}#hud{--h:calc(100vw/860)}}
+@media(prefers-reduced-motion:reduce){.track,.fig-in,.en{animation:none;opacity:1}}
+#tb{display:flex;gap:4px;flex-wrap:wrap}#tb button{flex:1;background:none;border:1px solid rgba(243,246,255,.2);color:var(--ink);font:13px var(--m);padding:8px;cursor:pointer;letter-spacing:.08em}#tb button.act{border-color:var(--cy);color:var(--cy);background:rgba(94,243,255,.1)}
+.pn:not(.on){display:none}.win button{font-family:var(--m)}
+#fc{width:100%;height:80px;border:1px solid rgba(243,246,255,.15);margin-bottom:10px}#sy{margin:0;font:14px/1.7 var(--m);white-space:pre-wrap}
+.pn label{display:flex;gap:10px;align-items:center;margin-bottom:12px;font-size:14px}.pn label input:not([type=checkbox]){flex:1}.pn select{background:#04060c;color:var(--ink);border:1px solid rgba(94,243,255,.45);padding:8px;font:inherit}
+.win{overflow:auto}
+</style>
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#030409"></head>
+<body>
+<h1 class="hide">AMITH — an autonomous multimodal intelligent technology hub</h1>
+
+<div class="layer"><canvas id="sky"></canvas><canvas id="trail"></canvas></div>
+
+<div class="layer hl"><div class="track" id="trk"></div></div>
+
+<div id="fig"><div class="fig-in" id="fi">
+<svg viewBox="0 0 400 760" width="100%" height="100%" aria-hidden="true">
+<defs>
+<linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfd8ff" stop-opacity=".85"/><stop offset=".45" stop-color="#8a7bff" stop-opacity=".55"/><stop offset="1" stop-color="#2a1b6b" stop-opacity=".25"/></linearGradient>
+<radialGradient id="gc" cx=".5" cy=".4" r=".4"><stop offset="0" stop-color="#ffb8a8" stop-opacity=".9"/><stop offset="1" stop-color="#ffb8a8" stop-opacity="0"/></radialGradient>
+<filter id="gl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<path id="orb" d="M200,124 a-66,0 0 0 0 -130,0"/>
+</defs>
+<path d="M200 190 C150 195 110 215 80 260 C50 310 60 420 40 560 C30 640 20 700 10 760 H390 C380 700 370 640 360 560 C340 420 350 310 320 260 C290 215 250 195 200 190Z" fill="url(#gb)" stroke="#9fe9ff" stroke-opacity=".6" stroke-width="1.5"/>
+<path d="M200 190 C170 200 150 230 140 300 C130 420 150 560 120 760 M200 190 C230 200 250 230 260 300 C270 420 250 560 280 760" fill="none" stroke="#fff" stroke-opacity=".28"/>
+<ellipse cx="200" cy="340" rx="60" ry="90" fill="url(#gc)"/>
+<rect x="188" y="150" width="24" height="50" rx="10" fill="url(#gb)"/>
+<ellipse cx="200" cy="110" rx="78" ry="58" fill="none" stroke="#5ef3ff" stroke-width="12" filter="url(#gl)"/>
+<ellipse cx="200" cy="110" rx="78" ry="58" fill="none" stroke="#e8fdff" stroke-width="2.5"/>
+<circle r="15" fill="#8a7bff" filter="url(#gl)"><animateMotion dur="6s" repeatCount="indefinite" path="M200,70 a60,42 0 1 1 -0.1,0"/></circle>
+<circle cx="200" cy="110" r="18" fill="#cfe9ff" filter="url(#gl)"/><circle cx="194" cy="104" r="6" fill="#fff"/>
+</svg></div></div>
+
+<div class="layer" id="ui">
+<div class="side l en" style="animation-delay:.6s"><b>+++</b>Speak your intent<p>Orchestrate</p></div>
+<div class="side r en" style="animation-delay:.7s"><b>+++</b>Five sub-agents<p>One voice</p></div>
+<h2 class="big bl en" style="animation-delay:.8s">SEE</h2>
+<h2 class="big br en" style="animation-delay:.9s">ACT</h2>
+<button id="go" class="en" style="animation-delay:1s" aria-label="Wake Amith">
+<svg viewBox="862 1127 330 102"><path d="M884,1131H1170L1188,1149V1207L1170,1225H884L866,1207V1149Z" fill="#04060c" stroke="#04060c" stroke-width="7" stroke-linejoin="round"/><path d="M871,1196V1151L886,1136H1170L1181,1147" fill="none" stroke="#5ef3ff" stroke-width="2.2" opacity=".9"/><path d="M884,1131H1170L1188,1149V1207L1170,1225H884L866,1207V1149Z" fill="none" stroke="#0a1220" stroke-width="2" opacity=".9"/><g class="chip"><path d="M1110,1140H1166L1180,1154V1196L1166,1210H1110L1096,1196V1154Z" fill="#5ef3ff"/></g><g class="chev" fill="none" stroke="#0a1a2c" stroke-width="2.2" stroke-linejoin="miter"><path d="M1124,1167l6,8l-6,8"/><path d="M1134,1167l6,8l-6,8"/><path d="M1144,1167l6,8l-6,8"/></g></svg>
+<span>WAKE AMITH</span></button>
+</div>
+
+<div id="hud">
+<svg><path id="bez" fill="#030409" fill-rule="evenodd"/><path id="br" fill="none" stroke="#cfd6e6"/><g id="rl"></g></svg>
+<div class="ht" id="brand">AMITH</div>
+<div class="ht" id="xy">X.0052  //  Y.0053</div>
+<button class="ht" id="menu">MENU</button>
+<button class="ht" id="mot" aria-pressed="false" aria-label="Motion on"><svg viewBox="0 0 68 22"><rect x="1" y="1" width="66" height="20" rx="5" fill="#0a0c14" stroke="#f3f6ff" stroke-width="1.4"/><g fill="#f3f6ff"><path d="M8,19L14,3H19L13,19Z"/><path d="M20,19L26,3H31L25,19Z"/><path d="M32,19L38,3H43L37,19Z"/><path d="M44,19L50,3H55L49,19Z"/></g><circle cx="60" cy="11" r="2.4" fill="#f3f6ff"/></svg><span id="ml">ON</span></button>
+</div>
+
+<div id="panel"><div class="win">
+<h2><span>AMITH // CONSOLE</span><button id="x" aria-label="Close">[ CLOSE ]</button></h2>
+<nav id="tb"></nav>
+<div class="pn" data-p="sys"><canvas id="fc" width="600" height="80"></canvas><pre id="sy">Collecting telemetry…</pre></div>
+<div class="pn" data-p="tasks"><form id="tf"><input id="ti" placeholder="New task…"><button>ADD</button></form><div id="tl" style="margin-top:10px"></div></div>
+<div class="pn" data-p="set"><label>Backend URL<input id="su" placeholder="https://amith-api.onrender.com"></label><label>Accent<select id="sa"><option value="#5ef3ff">Cyan</option><option value="#b48cff">Violet</option><option value="#ffb86b">Amber</option><option value="#6bffb0">Mint</option></select></label><label><input type="checkbox" id="sv" checked> Spoken replies</label><div><button id="se">EXPORT CHAT</button> <button id="sc">CLEAR CHAT</button></div></div>
+<div class="agents pn" id="ags" data-p="agents"></div>
+<div id="log" class="pn" data-p="chat" aria-live="polite"></div>
+<div id="st" class="pn" data-p="chat" style="font-size:12px;opacity:.7">ENGINE: offline demo</div>
+<form id="f" class="pn" data-p="chat"><input id="in" autocomplete="off" placeholder="Ask anything · or: unlock <passphrase>"><button type="button" id="mic">MIC</button><button type="button" id="cam">EYE</button><button>SEND</button></form>
+</div></div>
+
+<script>window.AMITH_API="";/* paste your Render URL here, e.g. https://amith-api.onrender.com */</script>
+<script>
+const $=id=>document.getElementById(id),H=document.documentElement;
+// marquee track (two identical halves → seamless loop)
+const unit='<span>AMITH</span><i>G_021</i><span>ONLINE</span><i>G_005</i>';
+$('trk').innerHTML=unit+unit;
+// HUD bezel
+function bez(){const W=innerWidth,Hh=innerHeight,ph=W<=820,h=ph?W/860:Math.min(W/2048,Hh/1360),cx=W/2,L=20*h,T=20*h,R=W-20*h,B=Hh-30*h,r=30*h,bc=Hh*577/1360,s=ph?0:26*h;
+let p=`M0 0H${W}V${Hh}H0Z M${L+r} ${T}H${cx-220*h}L${cx-188*h} ${T+30*h}H${cx+190*h}L${cx+222*h} ${T}H${R-r}Q${R} ${T} ${R} ${T+r}`;
+if(s)p+=`V${bc-247*h}L${R-s} ${bc-195*h}V${bc+195*h}L${R} ${bc+247*h}`;
+p+=`V${B-r}Q${R} ${B} ${R-r} ${B}H${cx+232*h}L${cx+190*h} ${B-37*h}H${cx-188*h}L${cx-230*h} ${B}H${L+r}Q${L} ${B} ${L} ${B-r}`;
+if(s)p+=`V${bc+247*h}L${L+s} ${bc+195*h}V${bc-195*h}L${L} ${bc-247*h}`;
+p+=`V${T+r}Q${L} ${T} ${L+r} ${T}Z`;$('bez').setAttribute('d',p);
+const o=5*h,a=14*h;$('br').setAttribute('stroke-width',Math.max(1,2*h));
+$('br').setAttribute('d',`M${o} ${o+a}V${o}H${o+a}M${W-o-a} ${o}H${W-o}V${o+a}M${o} ${Hh-o-a}V${Hh-o}H${o+a}M${W-o-a} ${Hh-o}H${W-o}V${Hh-o-a}`);
+$('rl').innerHTML=ph?'':[L,R].map(x=>`<line x1="${x}" x2="${x}" y1="${bc-180*h}" y2="${bc+208*h}" stroke="#cfd6e6" stroke-width="${Math.max(.8,1.2*h)}" opacity=".55"/><circle cx="${x}" cy="${bc-180*h}" r="${3*h}" fill="#7f8aa6"/><circle cx="${x}" cy="${bc+208*h}" r="${3*h}" fill="#7f8aa6"/>`).join('')}
+addEventListener('resize',bez);bez();
+// motion toggle
+$('mot').onclick=()=>{const p=H.classList.toggle('paused');$('ml').textContent=p?'OFF':'ON';$('mot').setAttribute('aria-pressed',p);$('mot').setAttribute('aria-label',p?'Motion off':'Motion on')};
+const rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+// sky: procedural aurora in WebGL
+const sk=$('sky'),gl=sk.getContext('webgl',{antialias:false,alpha:false});
+if(gl){const vs='attribute vec2 p;void main(){gl_Position=vec4(p,0,1)}',
+fs=`precision mediump float;uniform vec2 R;uniform float t;
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453)}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+1.),f.x),f.y)}
+void main(){vec2 v=gl_FragCoord.xy/R;float y=v.y;
+vec3 c=mix(vec3(.02,.03,.16),vec3(.16,.1,.42),pow(1.-y,1.6));
+vec2 s=floor(gl_FragCoord.xy/2.);c+=step(.9965,h(s))*(.5+.5*sin(t*2.+h(s)*30.))*smoothstep(.35,.8,y);
+for(int i=0;i<3;i++){float k=float(i);float w=y*2.4+sin(v.x*3.+t*(.35+k*.12)+k*2.)*.35+n(vec2(v.x*4.+k*5.,t*.25))*.5;
+float r=exp(-pow((w-1.35-k*.28)*3.4,2.));c+=mix(vec3(.55,.2,1.),vec3(.2,.95,1.),k/2.)*r*(.55+.45*n(vec2(v.x*30.,k+t*.5)))*smoothstep(.3,.7,y)*.9;}
+float cl=n(vec2(v.x*5.-t*.03,y*9.))*.6+n(vec2(v.x*11.+t*.05,y*18.))*.4;
+c=mix(c,vec3(.55,.5,.85)*(.55+cl*.6),smoothstep(.36,.12,y)*(.5+cl*.5));
+gl_FragColor=vec4(c,1)}`;
+const mk=(t,s)=>{const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);return o},pr=gl.createProgram();
+gl.attachShader(pr,mk(gl.VERTEX_SHADER,vs));gl.attachShader(pr,mk(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);gl.useProgram(pr);
+gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+const lp=gl.getAttribLocation(pr,'p');gl.enableVertexAttribArray(lp);gl.vertexAttribPointer(lp,2,gl.FLOAT,false,0,0);
+const uR=gl.getUniformLocation(pr,'R'),uT=gl.getUniformLocation(pr,'t');let tm=0,last=performance.now();
+const rs=()=>{const w=Math.min(1280,innerWidth);sk.width=w;sk.height=w*innerHeight/innerWidth;gl.viewport(0,0,sk.width,sk.height)};addEventListener('resize',rs);rs();
+(function f(now){if(!H.classList.contains('paused')&&!rm)tm+=(now-last)/1000;last=now;gl.uniform2f(uR,sk.width,sk.height);gl.uniform1f(uT,tm);gl.drawArrays(gl.TRIANGLES,0,3);requestAnimationFrame(f)})(last)}
+// cursor liquid-glass ribbed trail (2D overlay)
+const tr=$('trail'),tc=tr.getContext('2d');let px=null,py,amt=0;
+const rt=()=>{tr.width=innerWidth;tr.height=innerHeight};addEventListener('resize',rt);rt();
+addEventListener('pointermove',e=>{$('xy').textContent='X.'+String(Math.round(e.clientX)).padStart(4,'0').slice(-4)+'  //  Y.'+String(Math.round(e.clientY)).padStart(4,'0').slice(-4);
+if(!rm){if(px!==null){amt=Math.min(1,amt+Math.hypot(e.movementX,e.movementY)/40);seg(px,py,e.clientX,e.clientY)}px=e.clientX;py=e.clientY}tg(e.clientX,e.clientY)});
+function seg(a,b,c,d){const L=Math.hypot(c-a,d-b)||1,nx=-(d-b)/L,ny=(c-a)/L;tc.globalCompositeOperation='lighter';
+for(let i=-4;i<=4;i++){const o=i*3.2;tc.strokeStyle=`rgba(${150+i*8},${170+Math.abs(i)*8},255,${.07*(1-Math.abs(i)/5)*(.4+amt)})`;tc.lineWidth=2.4;tc.lineCap='round';tc.beginPath();tc.moveTo(a+nx*o,b+ny*o);tc.lineTo(c+nx*o,d+ny*o);tc.stroke()}
+tc.strokeStyle=`rgba(190,170,255,${.06*(.4+amt)})`;tc.lineWidth=30;tc.beginPath();tc.moveTo(a,b);tc.lineTo(c,d);tc.stroke()}
+(function fd(){tc.globalCompositeOperation='destination-out';tc.fillStyle='rgba(0,0,0,.05)';tc.fillRect(0,0,tr.width,tr.height);amt*=.82;requestAnimationFrame(fd)})();
+// figure looks at the cursor
+let yw=0,pt=0,rl=0,dx=0,dy=0,X=0,tx=null,ty,fi=$('fi'),lt=performance.now();
+function tg(x,y){const f=$('fig').getBoundingClientRect(),hx=f.left+f.width/2,hy=f.top+f.height*.15;dx=Math.max(-1,Math.min(1,(x-hx)/(innerWidth/2)));dy=Math.max(-1,Math.min(1,(y-hy)/(innerHeight/2)))}
+document.addEventListener('pointerleave',()=>{dx=dy=0});
+(function fg(n){const k=1-Math.exp(-Math.min(.05,(n-lt)/1000)*4.2);lt=n;if(!H.classList.contains('paused')&&!rm){yw+=(dx*35-yw)*k;pt+=(dy*-11-pt)*k;rl+=(dx*-2.6-rl)*k;X+=(dx*14-X)*k;
+fi.style.transform=`translateX(${X}px) rotateY(${yw}deg) rotateX(${pt}deg) rotateZ(${rl}deg)`}requestAnimationFrame(fg)})(lt);
+// console
+const AG=[['Amith-Core','Intent & persona'],['Amith-Dev','Code, git, Docker'],['Amith-Research','Web & papers'],['Amith-Sentinel','Security & cameras'],['Amith-Nexus','Smart home IoT']];
+$('ags').innerHTML=AG.map(a=>`<div class="ag"><b>${a[0]}</b>${a[1]}</div>`).join('');
+const ac=[...document.querySelectorAll('.ag')],lg=$('log');
+const say=(t,c)=>{const p=document.createElement('p');if(c)p.className=c;p.textContent=t;lg.appendChild(p);lg.scrollTop=1e9;
+if('speechSynthesis'in window&&!c&&VO){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=1.02;speechSynthesis.speak(u)}};
+function route(q){q=q.toLowerCase();
+if(/docker|git|code|bug|build|debug|script|error/.test(q))return[1,'Capturing stderr, patching the dependency and re-running. I will make up to three attempts before I trouble you, sir.'];
+if(/research|paper|stock|search|find|pqc|news/.test(q))return[2,'Crawling sources in parallel and cross-checking the facts. A concise brief will follow shortly.'];
+if(/scan|network|camera|security|lock|firewall|intruder/.test(q))return[3,'Sentinel is sweeping the network and camera feeds. No anomalies so far. Locks remain engaged.'];
+if(/light|climate|temperature|ac|fan|home|room/.test(q))return[4,'Nexus has adjusted the environment. Anything else for the room, sir?'];
+if(/delete|reboot|drop|pay|transfer/.test(q))return[3,'That action is irreversible. I require your explicit verbal authorisation before proceeding, sir.'];
+return[0,'Understood. I will decompose that into sub-tasks and route them accordingly.']}
+function open_(){$('panel').classList.add('on');if(!lg.children.length)greet();$('in').focus()}
+$('go').onclick=open_;$('menu').onclick=open_;$('x').onclick=()=>{$('panel').classList.remove('on');speechSynthesis&&speechSynthesis.cancel()};
+addEventListener('keydown',e=>{if(e.key==='Escape')$('x').click()});
+let VO=true;const sv=(k,v)=>{try{localStorage.setItem(k,v)}catch{}},ld=(k,d)=>{try{return localStorage.getItem(k)??d}catch{return d}},API=(ld('amith_api','')||window.AMITH_API||'').replace(/\/$/,'');let hist=[],PW='';
+if(API)fetch(API+'/api/models').then(r=>r.json()).then(r=>$('st').textContent='ENGINE: '+r.provider+' / '+r.model+' (auto-detected)').catch(()=>{});
+async function ask(q){hist.push({role:'user',content:q});
+try{const r=await fetch(API+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:hist.slice(-12),passphrase:PW,ctx:'Local time '+new Date().toLocaleString()+'. Open tasks: '+TK.filter(t=>!t.d).map(t=>t.t).join('; ')+'. Remembered facts: '+MEM.join('; ')})});if(!r.ok)throw 0;const d=await r.json();hist.push({role:'assistant',content:d.reply});$('st').textContent='ENGINE: '+d.provider+' / '+d.model+(d.admin?' · ADMIN':' · GUEST');return d.reply}catch{return null}}
+$('f').onsubmit=async e=>{e.preventDefault();const v=$('in').value.trim();if(!v)return;$('in').value='';
+if(v[0]==='/'){cmd(v);return}
+if(/^unlock /i.test(v)){PW=v.slice(7);say('Passphrase held for this session, sir. Admin status shows once the server verifies it.');return}
+say('> '+v,'u');const[i,m]=route(v);ac.forEach((a,j)=>a.classList.toggle('act',j===i));
+if(stream&&/\b(see|look)\b/i.test(v)){see(v);return}
+const a=API?await ask(v):null;say(a||m)};
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec,live=false;
+$('mic').onclick=()=>{if(!SR)return say('Speech recognition is unavailable in this browser, sir. Chrome works best.');
+if(live){live=false;rec.stop();return}
+rec=new SR();rec.continuous=true;rec.interimResults=false;rec.lang='en-IN';
+rec.onspeechstart=()=>speechSynthesis.cancel();
+rec.onresult=e=>{const t=e.results[e.results.length-1][0].transcript.trim();$('in').value=t.replace(/^(hey )?amith[, ]*/i,'');$('f').requestSubmit()};
+rec.onend=()=>{if(live)rec.start();else $('mic').textContent='MIC'};
+live=true;$('mic').textContent='LIVE';rec.start()};
+let stream;
+$('cam').onclick=async()=>{if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;$('cam').textContent='EYE';return}
+try{stream=await navigator.mediaDevices.getUserMedia({video:true});const v=CV=document.createElement('video');v.srcObject=stream;v.muted=true;await v.play();$('cam').textContent='SEEING';
+const fd='FaceDetector'in window?new FaceDetector({fastMode:true}):null,c=document.createElement('canvas');c.width=64;c.height=48;const x=c.getContext('2d',{willReadFrequently:true});let seen=false,miss=0,prev;
+(async function loop(){if(!stream)return;let f=false;
+if(fd){try{f=(await fd.detect(v)).length>0}catch{}}
+else{x.drawImage(v,0,0,64,48);const d=x.getImageData(0,0,64,48).data;if(prev){let s=0;for(let i=0;i<d.length;i+=16)s+=Math.abs(d[i]-prev[i]);f=s/(d.length/16)>6}prev=d}
+miss=f?0:miss+1;if(f&&!seen){seen=true;say('Welcome back, sir. I can see you.')}if(miss>20&&seen){seen=false;say('Presence lost. Standing by.')}
+setTimeout(loop,300)})()}catch{say('Camera access was denied, sir.')}};
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+$('tb').innerHTML=[['chat','CHAT'],['agents','AGENTS'],['sys','SYSTEM'],['tasks','TASKS'],['set','SETTINGS']].map(a=>`<button data-n="${a[0]}">${a[1]}</button>`).join('');
+function tab(n){$('tb').dataset.t=n;document.querySelectorAll('.pn').forEach(e=>e.classList.toggle('on',e.dataset.p===n));document.querySelectorAll('#tb button').forEach(b=>b.classList.toggle('act',b.dataset.n===n));if(n==='chat')$('in').focus()}
+$('tb').onclick=e=>e.target.dataset.n&&tab(e.target.dataset.n);tab('chat');
+let TK=[];try{TK=JSON.parse(ld('amith_tasks','[]'))}catch{}
+const rtk=()=>{$('tl').innerHTML=TK.map((t,i)=>`<div class="ag${t.d?' act':''}" data-i="${i}" style="cursor:pointer;margin-bottom:6px">${t.d?'✓':'○'} ${esc(t.t)}<span data-x="${i}" style="float:right;color:var(--cy)">✕</span></div>`).join('')||'No tasks, sir.';sv('amith_tasks',JSON.stringify(TK))};rtk();
+$('tl').onclick=e=>{const x=e.target.dataset.x,i=e.target.closest('[data-i]')?.dataset.i;if(x!==undefined)TK.splice(x,1);else if(i!==undefined)TK[i].d=!TK[i].d;rtk()};
+$('tf').onsubmit=e=>{e.preventDefault();const v=$('ti').value.trim();if(v){TK.push({t:v,d:0});$('ti').value='';rtk()}};
+$('su').value=ld('amith_api','');$('su').onchange=()=>{sv('amith_api',$('su').value.trim());setTimeout(()=>location.reload(),400)};
+$('sa').onchange=()=>{H.style.setProperty('--cy',$('sa').value);sv('amith_acc',$('sa').value)};const ac2=ld('amith_acc','');if(ac2){H.style.setProperty('--cy',ac2);$('sa').value=ac2}
+$('sv').onchange=()=>VO=$('sv').checked;
+$('sc').onclick=()=>{lg.innerHTML='';hist=[]};
+$('se').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([[...lg.children].map(p=>p.textContent).join('\n')],{type:'text/plain'}));a.download='amith-chat.txt';a.click()};
+function greet(){const h=new Date().getHours(),n=TK.filter(t=>!t.d).length;say(`${h<12?'Good morning':h<18?'Good afternoon':'Good evening'}, sir. Amith online. Systems operational. ${n?'You have '+n+' open task'+(n>1?'s':'')+'.':'Your task list is clear.'} How can I assist you?`)}
+function cmd(v){const[c,...r]=v.slice(1).split(' '),a=r.join(' ');
+if(c==='remember'&&a){MEM.push(a);sv('amith_mem',JSON.stringify(MEM));say('Noted, sir.')}else if(c==='forget'){MEM=[];sv('amith_mem','[]');say('Memory cleared.')}else if(c==='see')see(a||'Describe what you see briefly.');else if(c==='clear')$('sc').click();else if(c==='export')$('se').click();else if(c==='tab'&&a)tab(a);else if(c==='task'&&a){TK.push({t:a,d:0});rtk();say('Task logged, sir.')}
+else say('Commands: /task <text>, /tab chat|agents|sys|tasks|set, /remember <fact>, /forget, /see, /clear, /export. Shortcut: Ctrl+K.')}
+addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();open_()}});
+let fr=0,fps=[],k5=0,lat='n/a';const t0=Date.now();
+(function c(){fr++;requestAnimationFrame(c)})();
+setInterval(async()=>{fps.push(fr);fr=0;if(fps.length>60)fps.shift();if($('tb').dataset.t!=='sys')return;
+const g=$('fc').getContext('2d');g.clearRect(0,0,600,80);g.strokeStyle=getComputedStyle(H).getPropertyValue('--cy').trim()||'#5ef3ff';g.beginPath();fps.forEach((v,i)=>{const y=78-Math.min(v,60)*1.2;i?g.lineTo(i*10,y):g.moveTo(i*10,y)});g.stroke();
+let bat='n/a';try{const b=await navigator.getBattery();bat=Math.round(b.level*100)+'%'+(b.charging?' (charging)':'')}catch{}
+if(API&&k5++%5===0){try{const s=performance.now();await fetch(API+'/api/health');lat=Math.round(performance.now()-s)+' ms'}catch{lat='unreachable'}}
+$('sy').textContent=`FPS        ${fps[fps.length-1]}\nCPU CORES  ${navigator.hardwareConcurrency||'n/a'}\nMEMORY     ${navigator.deviceMemory?navigator.deviceMemory+' GB':'n/a'}\nBATTERY    ${bat}\nNETWORK    ${navigator.onLine?'online':'offline'}${navigator.connection?' · '+navigator.connection.effectiveType:''}\nBACKEND    ${API?lat:'offline demo'}\nSESSION    ${Math.floor((Date.now()-t0)/1000)} s\nCAMERA     ${stream?'active':'off'}   MIC ${live?'live':'off'}`},1000);
+let CV,MEM=[];try{MEM=JSON.parse(ld('amith_mem','[]'))}catch{}
+async function see(p){if(!stream||!CV)return say('Enable the camera with EYE first, sir.');if(!API)return say('Vision needs the backend, sir.');
+const c=document.createElement('canvas');c.width=640;c.height=Math.round(640*CV.videoHeight/CV.videoWidth)||480;c.getContext('2d').drawImage(CV,0,0,c.width,c.height);
+try{const r=await fetch(API+'/api/vision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:c.toDataURL('image/jpeg',.7).split(',')[1],prompt:p})});if(!r.ok)throw 0;say((await r.json()).reply)}catch{say('Vision request failed, sir.')}}
+</script>
+<script>if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js')</script></body>
+</html>

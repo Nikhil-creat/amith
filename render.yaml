@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: amith-api
+    runtime: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
+    envVars:
+      - {key: GROQ_API_KEY, sync: false}
+      - {key: GEMINI_API_KEY, sync: false}
+      - {key: ADMIN_PASSPHRASE, sync: false}
+      - {key: ALLOWED_ORIGIN, sync: false}
